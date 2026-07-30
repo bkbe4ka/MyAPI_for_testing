@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+
+# Виртуальные окружения
+.venv/
+venv/
+env/
+
+# Тестовые артефакты
+.pytest_cache/
+.hypothesis/
+.schemathesis/
+schemathesis-report/
+.coverage
+htmlcov/
+allure-results/
+
+# Секреты
+.env
+.env.local
+*.pem
+*.key
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# ОС
+.DS_Store
+Thumbs.db
+
+# Логи и дампы БД
+*.log
+*.sql.bak
