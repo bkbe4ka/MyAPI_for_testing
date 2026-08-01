@@ -1,6 +1,6 @@
 from datetime import date
 
-from pydantic import BaseModel, ConfigDict, Field, model_validation
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class BookingCreate(BaseModel):
@@ -14,7 +14,7 @@ class BookingCreate(BaseModel):
     checkout: date
     additionalneeds: str | None = Field(default=None, max_length=200)
 
-    @model_validation(mode='after')
+    @model_validator(mode='after')
     def checkout_after_ckeckin(self):
         if self.checkout <= self.checkin:
             raise ValueError('Checkout must be after checkin')

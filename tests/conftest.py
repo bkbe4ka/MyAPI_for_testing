@@ -13,7 +13,7 @@ from app.models import Booking
 def session():
     s = requests.Session()
     s.trust_env = False
-    yield
+    yield s
     s.close()
 
 @pytest.fixture
@@ -23,6 +23,12 @@ def booking_client(session):
 @pytest.fixture(scope='session')
 def engine():
     return create_engine(DATABASE_URL)
+
+@pytest.fixture
+def db_session(engine):
+    with Session(engine) as s:
+        yield s
+
 
 @pytest.fixture(autouse=True)
 def clean_db(db_session):

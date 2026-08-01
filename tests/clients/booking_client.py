@@ -1,7 +1,7 @@
 from tests.config import TIMEOUT, BASE_URL
 
 class BookingClient:
-    def __int__(self, session, base_url=BASE_URL, timeout=TIMEOUT):
+    def __init__(self, session, base_url=BASE_URL, timeout=TIMEOUT):
         self.session = session
         self.base_url = base_url.rstrip('/')
         self.timeout = timeout

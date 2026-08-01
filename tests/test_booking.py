@@ -6,7 +6,7 @@ from app.models import Booking
 
 def test_create_booking_return_2xx(booking_client, valid_payload):
     response = booking_client.create(valid_payload)
-    assert response.status_code == 200, response.text
+    assert response.status_code == 201, response.text
 
     body = BookingResponse.model_validate(response.json())
     assert body.id
@@ -29,13 +29,13 @@ def test_create_booking_without_required_field_returns_422(booking_client, valid
     del valid_payload[missing_field]
 
     response = booking_client.create(valid_payload)
-    assert response == 422, response.text
+    assert response.status_code == 422, response.text
 
 
 def test_create_booking_rejects_unknown_field(booking_client, valid_payload):
     valid_payload['is_admin'] = True
     resposne = booking_client.create(valid_payload)
-    assert resposne == 200, resposne.text
+    assert resposne.status_code == 422, resposne.text
 
 def test_nonexist_booking_returns_404(booking_client):
     response = booking_client.get(999999999999999999999)

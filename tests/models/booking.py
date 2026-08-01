@@ -1,5 +1,5 @@
 from datetime import date
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class BookingResponse(BaseModel):
@@ -10,7 +10,6 @@ class BookingResponse(BaseModel):
     lastname: str
     totalprice: int
     depositpaid: bool
-    checkin: date
-    checkout: date
+    checkin: date = Field(strict=False)
+    checkout: date = Field(strict=False)
     additionalneeds: str | None = None
-    

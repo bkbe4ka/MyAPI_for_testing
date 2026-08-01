@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, status
-from sqlalchemy import Session
+from sqlalchemy.orm import Session
 from app.db import check_connection, SessionLocal
 from app.models import Booking
 from app.schemas import BookingCreate, BookingResponse
@@ -29,7 +29,7 @@ def create_booking(payload: BookingCreate, db: Session = Depends(get_db)):
     booking = Booking(**payload.model_dump())
     db.add(booking)
     db.commit()
-    db.refresh()
+    db.refresh(booking)
     return booking
 
 @app.get('bookings/{booking_id}', response_model=BookingResponse)
