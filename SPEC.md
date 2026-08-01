@@ -6,7 +6,7 @@
 | id | int | — | генерируется сервером |
 | firstname | string | да | 1–50 символов |
 | lastname | string | да | 1–50 символов |
-| totalprice | int | да | >= 0 |
+| totalprice | int | да | 0 <= значение < 2 147 483 647 |
 | depositpaid | bool | да | |
 | checkin | date | да | формат YYYY-MM-DD |
 | checkout | date | да | строго > checkin |
@@ -16,6 +16,7 @@
 - 201 Created + объект Booking с id
 - 400 Bad Request — нарушены ограничения
 - 422 — тело не соответствует схеме
+- 422 - нарушены ограничения полей
 
 ## GET /bookings/{id}
 - 200 + объект

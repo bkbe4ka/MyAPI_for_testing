@@ -42,3 +42,16 @@ def test_nonexist_booking_returns_404(booking_client):
 
     assert response.status_code == 404, response.text
 
+def test_create_booking_with_out_of_range_totalprice(booking_client, valid_payload):
+    valid_payload['totalprice'] = 2832897238042370239847034892340897
+
+    response = booking_client.create(valid_payload)
+
+    assert response.status_code == 422, response.text
+
+def test_create_booking_with_null_byte_returns_422(booking_client, valid_payload):
+    valid_payload["firstname"] = "dfgdfgdfg\x00Test"
+
+    response = booking_client.create(valid_payload)
+
+    assert response.status_code == 422, response.text

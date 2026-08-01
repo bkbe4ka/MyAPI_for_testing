@@ -3,14 +3,27 @@ from sqlalchemy.orm import Session
 from app.db import check_connection, SessionLocal
 from app.models import Booking
 from app.schemas import BookingCreate, BookingResponse
-
-
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import DataError
+from sqlalchemy.exc import SQLAlchemyError
 
 
 app = FastAPI(
     title = 'Booking API',
     version = '0.1.0'
 )
+
+@app.exception_handler(DataError)
+def handle_data_error(request, exc):
+    return JSONResponse(
+        status_code = 422,
+        content={'detail': 'Invalid data or database constraints'}
+    )
+
+
+@app.exception_handler(SQLAlchemyError)
+def handler_db_error(request, exc):
+    return JSONResponse(status_code=422, content={'detail': 'Invalid data'})
 
 def get_db():
     db = SessionLocal()
