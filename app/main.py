@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from app.db import check_connection, SessionLocal
 from app.models import Booking
@@ -17,26 +17,49 @@ app = FastAPI(
 def handle_data_error(request, exc):
     return JSONResponse(
         status_code = 422,
-        content={'detail': 'Invalid data or database constraints'}
+        content={"detail": [
+                {
+                    "loc": ["body"],
+                    "msg": "Invalid data or database constraints",
+                    "type": "value_error",
+                }
+            ]}
     )
 
 @app.post(
         '/bookings',
         response_model = BookingResponse,
-        status_code = 201,
-        response={422: {'description': 'Validation error'}}
+        status_code = status.HTTP_201_CREATED,
+        summary = 'Create booking',
+        description = (
+            "Создаёт новую бронь.\n\n"
+            "**Ограничение, не выразимое в JSON Schema:** "
+            "`checkout` должен быть строго больше `checkin`. "
+            "При нарушении возвращается 422."
+        ),
+        responses={422: {'description': 'Booking not found'}}
 )
 
 @app.get(
     '/bookings/{booking_id}',
     response_model = BookingResponse,
-    response = {404: {'description': 'Validation error'}}
+    responses = {404: {'description': 'Booking not found'}}
 )
-
+def get_booking(booking_id: int, bd: Session = Depends(get_db)):
+    booking = db.get(Booking, booking_id)
+    if booking is None:
+        raise HTTPException(status_code = 404, detail='Booking not found')
+    return booking
 
 @app.exception_handler(SQLAlchemyError)
 def handler_db_error(request, exc):
-    return JSONResponse(status_code=422, content={'detail': 'Invalid data'})
+    return JSONResponse(status_code=422, content={"detail": [
+                {
+                    "loc": ["body"],
+                    "msg": "Invalid data",
+                    "type": "value_error",
+                }
+            ]})
 
 def get_db():
     db = SessionLocal()
@@ -64,3 +87,14 @@ def get_booking(booking_id: int, db: Session = Depends(get_db)):
     if booking is None:
         raise HTTPException(status_code=404, detail='Booking not found')
     return booking
+
+
+
+@app.middleware("http")
+async def add_allow_header(request: Request, call_next):
+    response = await call_next(request)
+    if response.status_code == 405 and "allow" not in response.headers:
+        response.headers["Allow"] = "GET, POST, OPTIONS"
+    return response
+
+

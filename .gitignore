@@ -5,7 +5,7 @@ __pycache__/
 .Python
 
 # Виртуальные окружения
-.venv/
+.venv-1/
 venv/
 env/
 
