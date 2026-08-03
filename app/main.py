@@ -13,6 +13,13 @@ app = FastAPI(
     version = '0.1.0'
 )
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 @app.exception_handler(DataError)
 def handle_data_error(request, exc):
     return JSONResponse(
@@ -45,7 +52,7 @@ def handle_data_error(request, exc):
     response_model = BookingResponse,
     responses = {404: {'description': 'Booking not found'}}
 )
-def get_booking(booking_id: int, bd: Session = Depends(get_db)):
+def get_booking(booking_id: int, db: Session = Depends(get_db)):
     booking = db.get(Booking, booking_id)
     if booking is None:
         raise HTTPException(status_code = 404, detail='Booking not found')
@@ -61,12 +68,7 @@ def handler_db_error(request, exc):
                 }
             ]})
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+
 
 @app.get('/health')
 def health():
