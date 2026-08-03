@@ -2,6 +2,5 @@
 expected-statuses = ["2xx", "404", "422"]
 [[operations]]
 include-path = "GET /bookings/{booking_id}"
-
 [operations.checks.negative_data_rejection]
 enabled = false
