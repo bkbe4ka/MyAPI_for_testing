@@ -20,6 +20,19 @@ def handle_data_error(request, exc):
         content={'detail': 'Invalid data or database constraints'}
     )
 
+@app.post(
+        '/bookings',
+        response_model = BookingResponse,
+        status_code = 201,
+        response={422: {'description': 'Validation error'}}
+)
+
+@app.get(
+    '/bookings/{booking_id}',
+    response_model = BookingResponse,
+    response = {404: {'description': 'Validation error'}}
+)
+
 
 @app.exception_handler(SQLAlchemyError)
 def handler_db_error(request, exc):
