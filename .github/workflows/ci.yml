@@ -31,9 +31,9 @@ jobs:
       API_BASE_URL: http://localhost:8000
 
     steps:
-      - uses: action/checkout@v4
+      - uses: actions/checkout@v4
 
-      - uses: action/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
