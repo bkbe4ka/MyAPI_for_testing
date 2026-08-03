@@ -63,4 +63,4 @@ jobs:
           st run http://localhost:8000/openapi.json \
             --mode all \
             --seed 42 \
-            --phases examples, coverage, fuzzing
+            --phases examples,coverage,fuzzing
