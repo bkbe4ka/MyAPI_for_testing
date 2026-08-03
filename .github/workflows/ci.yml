@@ -31,27 +31,27 @@ jobs:
       API_BASE_URL: http://localhost:8000
 
     steps:
-      -uses: action/checkout@v4
+      - uses: action/checkout@v4
 
-      -uses: action/setup-python@v5
-       with:
-        python-version: "3.12"
-        cache: pip
+      - uses: action/setup-python@v5
+          with:
+          python-version: "3.12"
+          cache: pip
       
-      -name: Start API
-       run: |
-         uvicorn app.main:app --host 0.0.0.0 --port 8000 &
-         for i in {1..30}; do
-           curl -sf http://localhost:8000/health && break
-           sleep 1
-         done
+      - name: Start API
+          run: |
+          uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+          for i in {1..30}; do
+            curl -sf http://localhost:8000/health && break
+            sleep 1
+          done
 
-      -name: Run tests
-       run: pytest -v
+      - name: Run tests
+          run: pytest -v
 
-      -name: Run schemathesis
-       run: |
-        st run http://localhost:8000/openapi.json \
-          --mode all \
-          --seed 42 \
-          --phases examples, coverage, fuzzing
+      - name: Run schemathesis
+          run: |
+          st run http://localhost:8000/openapi.json \
+            --mode all \
+            --seed 42 \
+            --phases examples, coverage, fuzzing
