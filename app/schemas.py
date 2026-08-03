@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator, field_valida
 
 
 class BookingCreate(BaseModel):
-    model_config = ConfigDict(extra='forbid', strict=True)
+    model_config = ConfigDict(extra='forbid')
 
     firstname: str = Field(min_length = 1, max_length = 50)
     lastname: str = Field(min_length = 1, max_length = 50)
