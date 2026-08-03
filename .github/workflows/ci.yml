@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: booking
+          POSTGRES_PASSWORD: booking
+          POSTGRES_DB: booking
+        ports:
+          -5342:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql+psycopg2://booking:booking@localhost:5432/booking
+      TEST_DATABASE_URL: postgresql+psycopg2://booking:booking@localhost:5432/booking
+      API_BASE_URL: http://localhost:8000
+
+    steps:
+      -uses: action/checkout@v4
+
+      -uses: action/setup-python@v5
+       with:
+        python-version: "3.12"
+        cache: pip
+      
+      -name: Start API
+       run: |
+         uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+         for i in {1..30}; do
+           curl -sf http://localhost:8000/health && break
+           sleep 1
+         done
+
+      -name: Run tests
+       run: pytest -v
+
+      -name: Run schemathesis
+       run: |
+        st run http://localhost:8000/openapi.json \
+          --mode all \
+          --seed 42 \
+          --phases examples, coverage, fuzzing
