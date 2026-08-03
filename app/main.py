@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status, Request
+from fastapi import FastAPI, Depends, HTTPException, status, Request, Path
 from sqlalchemy.orm import Session
 from app.db import check_connection, SessionLocal
 from app.models import Booking
@@ -61,7 +61,7 @@ def create_booking(payload: BookingCreate, db: Session = Depends(get_db)):
     response_model = BookingResponse,
     responses = {404: {'description': 'Booking not found'}}
 )
-def get_booking(booking_id: int, db: Session = Depends(get_db)):
+def get_booking(booking_id: int = Path(ge=1, le=2_147_483_647), db: Session = Depends(get_db)):
     booking = db.get(Booking, booking_id)
     if booking is None:
         raise HTTPException(status_code = 404, detail='Booking not found')
