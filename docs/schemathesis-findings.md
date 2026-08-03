@@ -6,7 +6,7 @@
 7	unsupported_method	баг реализации
 8   Response violates schema баг реализации
 
-## SCH-003. API rejected schema-compliant request
+## SCH-009. API rejected schema-compliant request
 
 **Чек:** `positive_data_acceptance`
 **Операция:** `POST /bookings`
@@ -26,3 +26,12 @@
 **Что НЕ сделано и почему.** Ослаблять валидацию на стороне API
 нельзя — правило отражает предметную область (нельзя выехать
 раньше, чем заехал) и продублировано check-constraint'ом в БД.
+
+## SCH-010. GET /bookings/{id} возвращает 404 на валидный id
+
+**Чек:** positive_data_acceptance
+**Вердикт:** ложное срабатывание
+
+404 — корректный ответ на запрос несуществующего ресурса.
+Схема описывает валидность идентификатора, но не его существование.
+Разрешено в schemathesis.toml.

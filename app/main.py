@@ -49,6 +49,7 @@ def handle_data_error(request, exc):
 
 @app.get(
     '/bookings/{booking_id}',
+    operation_id= 'create_booking',
     response_model = BookingResponse,
     responses = {404: {'description': 'Booking not found'}}
 )
@@ -75,21 +76,13 @@ def health():
     return {'status': 'OK', 'database': check_connection()}
 
 
-@app.post('/bookings', response_model=BookingResponse, status_code=status.HTTP_201_CREATED)
+@app.post('/bookings', operation_id= 'create_booking', response_model=BookingResponse, status_code=status.HTTP_201_CREATED)
 def create_booking(payload: BookingCreate, db: Session = Depends(get_db)):
     booking = Booking(**payload.model_dump())
     db.add(booking)
     db.commit()
     db.refresh(booking)
     return booking
-
-@app.get('bookings/{booking_id}', response_model=BookingResponse)
-def get_booking(booking_id: int, db: Session = Depends(get_db)):
-    booking = db.get(Booking, booking_id)
-    if booking is None:
-        raise HTTPException(status_code=404, detail='Booking not found')
-    return booking
-
 
 
 @app.middleware("http")
